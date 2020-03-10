@@ -20,19 +20,18 @@ public class AsicsSrvlt extends M {
                         ,m2Pm = Util.md5 (b2)
                         ,m2Db = Util.b64d(u.pw);//c3284d0f94606de1fd2af172aba15bf3
                 if(m2Db.equals(m2Pm)) {
-                    Prop e= Prop.load("user",u.id)
-                            ,r=e.fk("role","roleId");
-                    tl.h.s("usr", tl.usr = Util.mapCreate("osr",e,"user",u,"role",r));
+                    Prop e= Prop.load("user",null//u.id
+                        )
+                        ,r=e.fk("role","roleId");
+                    tl.h.s("usr", tl.usr //= Util.mapCreate("osr",e,"user",u,"role",r)
+                    );
                     Util.mapSet(m,"role",r,"user",e);
                 }}//m1=md5("admin") 21232f297a57a5a743894a0e4a801fc3
-            // m1b1=b64e(m1) MjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzM=
-            // m1b2=b64e(m1b1) TWpFeU16Sm1NamszWVRVM1lUVmhOelF6T0RrMFlUQmxOR0U0TURGbVl6TT0=  // WXpNeU9EUmtNR1k1TkRZd05tUmxNV1prTW1GbU1UY3lZV0poTVRWaVpqTT0
-            // , m2= md5(m1):c3284d0f94606de1fd2af172aba15bf3
-            // b1m2=b64(m2):YzMyODRkMGY5NDYwNmRlMWZkMmFmMTcyYWJhMTViZjM=
+
             return m;}
 
         @HttpMethod
-        public static void logout(TL tl){ tl.usr =null;}
+        public static void logout(TL tl){ tl.usr =null;
 /*
 
     static Prop usrRole( TL tl){
@@ -177,6 +176,7 @@ public class AsicsSrvlt extends M {
                 r.put(id,ex);
             }return r;}
 */
+}
 //    }//class GrjSrvlt
 
 //////////////////////////////////////////////////////////////////////
@@ -209,9 +209,7 @@ public class AsicsSrvlt extends M {
 
         @Override public Object[] wherePK() { return new Object[0]; }
 
-        @Override public List DBTblCreation(TL tl)
-        //{ return null; }@Override public List creationDBTIndices()
-        {
+        @Override public List DBTblCreation(TL tl){
             final String V="varchar(255) NOT NULL DEFAULT '??' ";
             return Util.lst
                     (Util.lst(
@@ -253,17 +251,13 @@ public class AsicsSrvlt extends M {
 
         @Override public Sql.Tbl save() throws Exception {
             if(log==null)log=new Date();
-            if(pool!=null)synchronized(pool) {
                 super.save();
-                saveLog();
-                DB.D.close();
-            }else
-                log("Prop.save:no pool");
+                saveLog();// DB.D.close();
             return this;
         }//save
 
         void saveLog() throws Exception {
-            Log g=Log.tl();g.vals( vals() );
+            Log g=Log.tl();g.vals( valsForSql() );
             g.save();
         }//saveLog
 
@@ -275,91 +269,54 @@ public class AsicsSrvlt extends M {
             m.save();
         }
 
-        Map<String,Map<String,SD>>loadProps(Map<String,Map<String,SD>>m
-                ,String usr,String domain,String mac,Date log){
-            if(m==null)m=new HashMap<String,Map<String,SD>>();
-            for(Tbl t:query(
-                    where(C.usr,usr
-                            , C.domain,domain
-                            , C.mac,mac
-                            ,Util.lst( C.log,Co.gt,log),log )) )
-            {	Map<String,SD>x=m.get( path );
-                if(x==null)m.put(path,x=new HashMap<String,SD>());
-                x.put( prop,new SD(val,log) );
-            }
-            return m;}
-
-        List<Asic>loadAsicsProps(String usr,String domain,boolean isInitMacs){
-            List<Asic>m=new LinkedList<Asic>();
-            try{String sql="select `"+C.mac+"` from `"
-                    +dbtName+"` where `"+C.usr+"`=? and  `"+C.domain
-                    +"`=? group by `"+C.mac+"`";//Object[]a=D.q1col( sql,usr,domain );
-                List<String>a=D.q1colTList(sql,String.class,C.usr,usr,C.domain,domain);
-
-                for(String mac:a)try{
-                    //String mac=o==null?null:o.toString();if(mac==null)continue;
-                    Asic x=isInitMacs?Asic.macs.get( mac):new Asic( mac );
-                    boolean exists=x!=null;
-                    if(isInitMacs)Asic.macs.put( mac,exists?x:(x=new Asic( mac ) ));
-                    else if(!exists)x=new Asic( mac );
-                    m.add( x );
-                    if(!isInitMacs||!exists)
-                        x.vals=loadProps(x.vals, usr,domain,mac,new Date(0) );
-                    else//TODO: merge db-vals with live-vals
-                        x.mergeProps(loadProps(null, usr,domain,mac,new Date(0) ));
-                }catch ( Exception x ){
-                    error(x,"Json.DB.Prop.loadAsicsProps:for:");
-                }
-            }catch ( Exception x ){
-                error(x,"Json.DB.Prop.loadAsicsProps:");
-            }
-            return m;
-        }
 
         public static Prop tl(){
-            Json t=Json.tl();
+            TL t=TL.tl();
             if(t.prop==null){
-                t.prop=new Prop();Log.tl();check();//x.checkDBTCreation();
+                t.prop=new Prop();Log.tl();check(t);//x.checkDBTCreation();
             }
             return t.prop;
         }
 
-        @Override public Prop newInst(){return new Prop();}
+       // @Override public Prop newInst(){return new Prop();}
 
         public static class SD{public String s;public Date d;public SD(String a,Date b){s=a;d=b;}}
 
+        Prop fk(String prop,String val){return null;}
+        static Prop load(String prop,String val){return null;}
     } // class Prop extends Tbl
 
     public static class Log extends Prop{
 
-        @Override public String getName() {
-            return "Log";}
+        @Override public String getName() {return "Log";}
 
         void saveLog() throws Exception {}//saveLog
 
-        @Override public List creationDBTIndices(){
-            List x=super.creationDBTIndices()
-                    ,z=(List)x.get( 1 );
+        @Override public List DBTblCreation(TL t){
+            List x=super.DBTblCreation(t)
+              ,z=(List)x.get( 1 );
             z.remove( 0 );
             return x;
         }
 
-        static{registered.add(Log.class);}//public static Log sttc=new Log( );
+        static{registered.add(Log.class);}
 
         public static Log tl(){
-            Json t=Json.tl();
-            if( t.log==null){
-                t.log=new Log();check();
+            TL t=TL.tl();
+            if( t.propLog==null){
+                t.propLog=new Log();check(t);
             }
-            return t.log;
+            return t.propLog;
         }
-        @Override public Log newInst(){return new Log();}
 
     } // class Log extends Prop extends Tbl
 
 //////////////////////////////////////////////////////////////////////
 
-    public static class User extends Prop{ }//class User //  @Override public Object[]wherePK(){Object[]a={C.id,id};return a;}
+    public static class User extends Prop{
+        String pw;
+        static User load(String un){return null;}
+    }//class User //  @Override public Object[]wherePK(){Object[]a={C.id,id};return a;}
 
 
 

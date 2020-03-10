@@ -1337,7 +1337,7 @@ public class M extends Dbg.Srvlt{
         public Map<String,Object> /**accessing request in json-format*/json;
         public Object bodyData;
         public Date now;
-        Map usr;
+        AsicsSrvlt.User usr;AsicsSrvlt.Prop prop;AsicsSrvlt.Log propLog;
         /**wrapping JspWriter or any other servlet writer in "out" */
         Json.Output out,/**jo is a single instanceof StringWriter buffer*/jo;
 
