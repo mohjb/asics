@@ -181,7 +181,7 @@ public class AsicsSrvlt extends M {
 
 //////////////////////////////////////////////////////////////////////
     /**Object Store Entity entry/row*/
-    public static class Prop extends Dbg.Sql.Tbl {
+    public static class Prop extends Sql.Tbl {
         final static String dbtName="Prop";
         static Field[]Filds;
 
@@ -209,11 +209,11 @@ public class AsicsSrvlt extends M {
 
         @Override public Object[] wherePK() { return new Object[0]; }
 
-        @Override public List DBTblCreation(Dbg.TL tl)
+        @Override public List DBTblCreation(TL tl)
         //{ return null; }@Override public List creationDBTIndices()
         {
             final String V="varchar(255) NOT NULL DEFAULT '??' ";
-            return Dbg.Util.lst
+            return Util.lst
                     (Util.lst(
                             "int(36) not null primary key auto_increment"
                             ,"TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
@@ -251,7 +251,7 @@ public class AsicsSrvlt extends M {
 
         static{registered.add(Prop.class);}
 
-        @Override public Dbg.Sql.Tbl save() throws Exception {
+        @Override public Sql.Tbl save() throws Exception {
             if(log==null)log=new Date();
             if(pool!=null)synchronized(pool) {
                 super.save();

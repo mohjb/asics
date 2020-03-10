@@ -10,16 +10,6 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.util.*;
-import java.sql.*;
-import java.net.URL;
-import java.util.Date;
-import java.lang.annotation.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 
 public class Dbg {
 
@@ -58,12 +48,14 @@ public static void main(String[]args)throws Exception{
 							"\t,clientTime:{class:\"Date\",time:1546161669488}\n" +
 							" }"
 			}
-	}; // Dbg$main
+	};
 
 	for(String[]p:prms){
 		s.pc.q.init(p);
-		service( s.pc.p,s.pc.q );s.pc.q.ssn.newlySsn=false;
-	}}
+		//s.service( s.pc.p,s.pc.q );
+		s.pc.q.ssn.newlySsn=false;
+	}
+}// Dbg$main
 
 //////////////////////////////////////////////////////////////////////
 
@@ -212,7 +204,7 @@ public static class Req implements HttpServletRequest {
 				protocolVersion = st.nextToken();
 			} else {
 				protocolVersion = "HTTP/1.1";
-				TL.tl().log("no protocol version specified, strange. Assuming HTTP/1.1.");//NanoHTTPD.LOG.log(Level.FINE,
+				M.TL.tl().log("no protocol version specified, strange. Assuming HTTP/1.1.");//NanoHTTPD.LOG.log(Level.FINE,
 			}
 			line = in.readLine();
 			while (line != null && !line.trim().isEmpty()) {
@@ -333,7 +325,7 @@ public static class Req implements HttpServletRequest {
 			decoded = URLDecoder.decode( str, "UTF8" );
 		} catch ( UnsupportedEncodingException ex ) {
 			//NanoHTTPD.LOG.log( Level.WARNING, "Encoding not supported, ignored", ignored );
-			TL.tl().error(ex,"Encoding not supported, ignored");
+			M.TL.tl().error(ex,"Encoding not supported, ignored");
 		}
 		return decoded;
 /*
@@ -828,25 +820,20 @@ public static class PC extends javax.servlet.jsp.PageContext{
 	@Override public Object getAttribute(String n){return findAttribute(n);}
 	@Override public Object getAttribute(String n, int arg1){return null;}
 	@Override public Enumeration<String> getAttributeNamesInScope(int arg0){return null;}
-	@Override public int getAttributesScope(String arg0) {TL.tl().log(
+	@Override public int getAttributesScope(String arg0) {M.TL.tl().log(
 			"Dbg.PC.getAttributesScope:not implemented:return 0");return 0;}
 
 	@Override public javax.servlet.jsp.el.ExpressionEvaluator getExpressionEvaluator(){return null;}
+	@Override public javax.el.ELContext getELContext(){M.TL.tl().log("Dbg.PC.getELContext:not implemented:return null");return null;}
 
-	@Override
-	public javax.el.ELContext getELContext() {
-		return null;
-	}
-
-	@Override public javax.servlet.jsp.JspWriter getOut(){TL.tl().log(
+	@Override public javax.servlet.jsp.JspWriter getOut(){M.TL.tl().log(
 			"Dbg.PC.getOut");return Srvlt.sttc.pc.p.jspWrtr;}
 	@Override public javax.servlet.jsp.el.VariableResolver getVariableResolver(){return null;}
-	@Override public void removeAttribute(String arg0){TL.tl().log(
+	@Override public void removeAttribute(String arg0){M.TL.tl().log(
 			"Dbg.PC.removeAttribute a:not implemented");}
-	@Override public void removeAttribute(String arg0, int arg1){TL.tl().log("Dbg.PC.removeAttribute a,b:not implemented:return null");}
-	@Override public void setAttribute(String arg0, Object arg1) {TL.tl().log("Dbg.PC.setAttribute a,b:not implemented:return null");}
-	@Override public void setAttribute(String arg0, Object arg1, int arg2) {TL.tl().log("Dbg.PC.setAttribute a,b,c:not implemented:return null");}
-	//@Override public javax.el.ELContext getELContext(){TL.tl().log("Dbg.PC.getELContext:not implemented:return null");return null;}
+	@Override public void removeAttribute(String arg0, int arg1){M.TL.tl().log("Dbg.PC.removeAttribute a,b:not implemented:return null");}
+	@Override public void setAttribute(String arg0, Object arg1) {M.TL.tl().log("Dbg.PC.setAttribute a,b:not implemented:return null");}
+	@Override public void setAttribute(String arg0, Object arg1, int arg2) {M.TL.tl().log("Dbg.PC.setAttribute a,b,c:not implemented:return null");}
 //public static class ELContext{}
 }//class PC
 
@@ -933,7 +920,7 @@ public static class SrvltContxt implements ServletContext{//static SrvltContxt s
 	@Override public String getMimeType(String p){
 		final String def="application/octet-stream";
 		Map m=(Map)attribs.get( "mapFileExt2MimeType" );
-		if(m==null) {m=Util.mapCreate(
+		if(m==null) {m=M.Util.mapCreate(
 				"woff","application/font-woff"
 				,"woff2","application/font-woff2"
 				,"jar"  ,"application/java-archive"
@@ -965,7 +952,7 @@ public static class SrvltContxt implements ServletContext{//static SrvltContxt s
 		}p=p==null?null:(String)m.get(p);
 		return p==null?def:p;}
 	@Override public RequestDispatcher getNamedDispatcher(String p){return null;}
-	@Override public String getRealPath(String p){return context.getRealPath( TL.tl(),p );}
+	@Override public String getRealPath(String p){return M.context.getRealPath( M.TL.tl(),p );}
 	@Override public RequestDispatcher getRequestDispatcher(String p){return null;}
 	@Override public java.net.URL getResource(String arg0) throws java.net.MalformedURLException {return null;}
 	@Override public InputStream getResourceAsStream( String p){return null;}
@@ -1006,9 +993,7 @@ public static class SrvltContxt implements ServletContext{//static SrvltContxt s
 						pc.q.cookieHeaders=new LinkedList<>(  );
 
 					}
-					Servlet s=getServlet(pc.q.uri);
-					if(s==null)
-						s=new FSrvlt();
+					Servlet s=getServlet(pc.q.uri); // if(s==null) s=new FSrvlt();
 					s.service( pc.q,pc.p );
 				}//while
 			}catch(Exception ex )
