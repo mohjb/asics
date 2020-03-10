@@ -1379,7 +1379,7 @@ public class M extends Dbg.Srvlt{
                 h.logOut=h.var("logOut",h.logOut);
                 if(h.getSession().isNew())
                     Sql.Tbl.check(this);
-                usr=(Map)h.s("usr");
+                usr=null;//(Map)h.s("usr"); //TODO: re-implement user initialization
                 h.url=h.req.getRequestURI().split("/");
             }catch(Exception ex){
                 error(ex,TlName,".onEnter");
