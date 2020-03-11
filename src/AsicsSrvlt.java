@@ -2,36 +2,29 @@ import java.lang.reflect.Field;
 import java.util.*;
 public class AsicsSrvlt extends M {
 
-//////////////////////////////////////////////////////////////////////
+@HttpMethod(usrLoginNeeded = false) public static Map
+login(@HttpMethod(prmName = "username") String un
+		, @HttpMethod(prmName = "pw") String pw
+		, @HttpMethod(prmName = "lastModified") Date lm
+		,@HttpMethod(prmName = "clientTime")Date clientTime
+		, TL tl)throws Exception {
+	User u=User.load(un);
+	Map m= Util.mapCreate("time",tl.now);
+	if(u != null && pw != null && u.pw!=null) {
+		String b2 = Util.b64d(Util.b64d(pw))
+				,m2Pm = Util.md5 (b2)
+				,m2Db = Util.b64d(u.pw);
+		if(m2Db.equals(m2Pm)) {
+			//Prop e= Prop.load("user",null//u.id
+			//),r=e.fk("role","roleId");
+			//tl.h.s("usr", tl.usr //= Util.mapCreate("osr",e,"user",u,"role",r)
+			//);
+			//Util.mapSet(m,"role",r,"user",e);
+		}}//m1=md5("admin") 21232f297a57a5a743894a0e4a801fc3
 
-//    public static class AsicSrvlt{//GrjSrvlt
+	return m;}
 
-        @HttpMethod(usrLoginNeeded = false) public static Map
-        login(@HttpMethod(prmName = "username") String un
-                , @HttpMethod(prmName = "pw") String pw
-                , @HttpMethod(prmName = "lastModified") Date lm
-                ,@HttpMethod(prmName = "clientTime")Date clientTime
-                , TL tl)throws Exception {
-            User u=User.load(un);
-            Map m= Util.mapCreate("time",tl.now);
-            if(u != null && pw != null && u.pw!=null) {
-                String b2 = Util.b64d(Util.b64d(pw))//b1=b64d(pw) YzMyODRkMGY5NDYwNmRlMWZkMmFmMTcyYWJhMTViZjM=
-                        //b2=b64d(b1) c3284d0f94606de1fd2af172aba15bf3
-                        ,m2Pm = Util.md5 (b2)
-                        ,m2Db = Util.b64d(u.pw);//c3284d0f94606de1fd2af172aba15bf3
-                if(m2Db.equals(m2Pm)) {
-                    Prop e= Prop.load("user",null//u.id
-                        )
-                        ,r=e.fk("role","roleId");
-                    tl.h.s("usr", tl.usr //= Util.mapCreate("osr",e,"user",u,"role",r)
-                    );
-                    Util.mapSet(m,"role",r,"user",e);
-                }}//m1=md5("admin") 21232f297a57a5a743894a0e4a801fc3
-
-            return m;}
-
-        @HttpMethod
-        public static void logout(TL tl){ tl.usr =null;
+@HttpMethod public static void logout(TL tl){ tl.usr =null;
 /*
 
     static Prop usrRole( TL tl){
@@ -179,95 +172,95 @@ public class AsicsSrvlt extends M {
 }
 
 
-    @HttpMethod(usrLoginNeeded = false) public static Map
-    updates(@HttpMethod(prmName = "usr") String u
-        , @HttpMethod(prmName = "domain") String domain
-        , @HttpMethod(prmName = "lastUpdate") Date lm
-        ,@HttpMethod(prmName = "clientTime")Date clientTime
-        ,@HttpMethod(prmName = "data")Map p
-        , TL tl)throws Exception
-    {Map m=Util.mapCreate();
-      Prop t=Prop.tl();
-      t.usr=u;t.domain=domain;
-      t.log=clientTime;
-      Prop.SD d=new Prop.SD("",null);
-      for (Object mac:p.keySet()) {
-         t.mac=mac.toString();Map p1=(Map)p.get(mac);
-         for (Object path:p1.keySet()) {
-            Map p2=(Map)p1.get(path);
-            t.path=path.toString();
-            for (Object prop:p2.keySet() ) {
-                t.prop=prop.toString();
-                List l=(List)p2.get(prop);
-                t.val=d.s=(String)l.get(0);
-                t.log=d.d=new Date((Long)l.get(1));
-                t.save();
-                Map m1=(Map)m.get(mac);
-                if(m1==null)m.put(mac,m1=Util.mapCreate());
-                Map m2=(Map)m1.get(path);
-                if(m2==null)m1.put(path,m2=Util.mapCreate());
-                m2.put(prop,System.currentTimeMillis());
-        }}}return m;}
+@HttpMethod(usrLoginNeeded = false) public static Map
+updates(@HttpMethod(prmName = "usr") String u
+	, @HttpMethod(prmName = "domain") String domain
+	, @HttpMethod(prmName = "lastUpdate") Date lm
+	,@HttpMethod(prmName = "clientTime")Date clientTime
+	,@HttpMethod(prmName = "data")Map p
+	, TL tl)throws Exception
+{Map m=Util.mapCreate();
+	Prop t=Prop.tl();
+	t.usr=u;t.domain=domain;
+	t.log=clientTime;//Prop.SD d=new Prop.SD("",null);
+	for (Object mac:p.keySet()) {
+		t.mac=mac.toString();
+		Object o=p.get(mac);
+		Map p1=o instanceof Map?(Map)o:null;
+		if(p1!=null) for (Object path:p1.keySet()) {
+			t.path=path.toString();o=p1.get(path);
+			Map p2=o instanceof Map?(Map)o:null;
+			if(p2!=null)for (Object prop:p2.keySet() ) {
+				t.prop=prop.toString();
+				o=p2.get(prop);
+				List l=o instanceof List?(List)o:null;
+				int n=l==null?0:l.size()-1;
+				o=n>0?l.get(0):o;
+				t.val=o==null?null:tl.jo().o( o ).toStrin_();
+				o=n>1?l.get(1):null;
+				t.log=o instanceof Date?(Date)o
+					:o instanceof Number?new Date(((Number)o).longValue())
+					:clientTime;
+				t.save();
+				Util.byPath( m,true,true
+					,mac,path,prop
+					,System.currentTimeMillis() );//Map m1=(Map)m.get(mac);if(m1==null)m.put(mac,m1=Util.mapCreate());Map m2=(Map)m1.get(path);if(m2==null)m1.put(path,m2=Util.mapCreate());m2.put(prop,System.currentTimeMillis());
+			}}}return m;}
 
 
-    @HttpMethod(usrLoginNeeded = false) public static Map
-    get(@HttpMethod(prmName = "usr") String u
-            , @HttpMethod(prmName = "from") Date d1
-            ,@HttpMethod(prmName = "to")Date d2
-            , TL tl)throws Exception
-    {Map m=Util.mapCreate();
-
-        return m;}
-
-//    }//class -Srvlt
+@HttpMethod(usrLoginNeeded = false) public static Map
+byDates(@HttpMethod(prmName = "usr") String u
+		, @HttpMethod(prmName = "from") Date d1
+		,@HttpMethod(prmName = "to")Date d2
+		, TL tl)throws Exception{return Prop.byDates( u,d1,d2,tl );}
 
 //////////////////////////////////////////////////////////////////////
-    /**Object Store Entity entry/row*/
-    public static class Prop extends Sql.Tbl {
-        final static String dbtName="Prop";
-        //static Field[]Filds;
+/**Object Store Entity entry/row*/
+public static class Prop extends Sql.Tbl {
+	final static String dbtName="Prop";
+	//static Field[]Filds;
 
-        @F public Integer id ;
+	@F public Integer id ;
 
-        @F public Date log ;
+	@F public Date log ;
 
-        @F public String usr,domain,mac,path,prop,val;
+	@F public String usr,domain,mac,path,prop,val;
 
- //       @Override public Field[] fields() { if(Filds==null) Filds=super.fields();return Filds; }
+	//       @Override public Field[] fields() { if(Filds==null) Filds=super.fields();return Filds; }
 
-        @Override public String getName() {return dbtName;}
+	@Override public String getName() {return dbtName;}
 
 //        @Override public CI pkc(){return C.id;}@Override public Object pkv(){return id;}
 
-        public enum C implements CI{id,log,usr,domain,mac,path,prop,val;
-            @Override public Field f(){return Co.f(name(), Prop.class);}
+	public enum C implements CI{id,log,usr,domain,mac,path,prop,val;
+		@Override public Field f(){return Co.f(name(), Prop.class);}
 
-            @Override public String getName() { return this.getName(); }
+		@Override public String getName() { return this.getName(); }
 
-            @Override public Class getType() { return null; }
-        }//C
+		@Override public Class getType() { return null; }
+	}//C
 
-        @Override public C[]columns(){return C.values();}
+	@Override public C[]columns(){return C.values();}
 
-        @Override public Object[] wherePK() { return new Object[0]; }
+	@Override public Object[] wherePK() { return new Object[0]; }
 
-        @Override public List DBTblCreation(TL tl){
-            final String V="varchar(255) NOT NULL DEFAULT '??' ";
-            return Util.lst
-                    (Util.lst(
-                            "int(36) not null primary key auto_increment"
-                            ,"TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
-                            ,V,V,V,V,V,"text"
-                            )
-                            ,Util.lst("unique(`"+C.usr+"`,`"+C.mac+"`,`"+C.path+"`,`"+C.prop+"`)"
-                            ,Util.lst(C.usr,C.log   )
-                            ,Util.lst(C.usr,C.mac   ,C.log  )
-                            ,Util.lst(C.usr,C.domain,C.log  )
-                            ,Util.lst(C.usr,C.path  ,C.log  )
-                            ,Util.lst(C.usr,C.prop  ,C.log  )
-                            ,Util.lst(C.usr,C.path,C.prop,C.log )
-                            )
-                    );//val
+	@Override public List DBTblCreation(TL tl){
+		final String V="varchar(255) NOT NULL DEFAULT '??' ";
+		return Util.lst
+				            (Util.lst(
+						            "int(36) not null primary key auto_increment"
+						            ,"TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+						            ,V,V,V,V,V,"text"
+						            )
+						            ,Util.lst("unique(`"+C.usr+"`,`"+C.mac+"`,`"+C.path+"`,`"+C.prop+"`)"
+						            ,Util.lst(C.usr,C.log   )
+						            ,Util.lst(C.usr,C.mac   ,C.log  )
+						            ,Util.lst(C.usr,C.domain,C.log  )
+						            ,Util.lst(C.usr,C.path  ,C.log  )
+						            ,Util.lst(C.usr,C.prop  ,C.log  )
+						            ,Util.lst(C.usr,C.path,C.prop,C.log )
+						            )
+				            );//val
 		/*
 		CREATE TABLE `Prop` (
 		`id`	int(36) not null primary key auto_increment
@@ -287,78 +280,95 @@ public class AsicsSrvlt extends M {
 		,index (`usr`,`path`,`prop`,`log`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		*/
-        }
+	}
 
-        static{registered.add(Prop.class);}
+	static{registered.add(Prop.class);}
 
-        @Override public Sql.Tbl save() throws Exception {
-            if(log==null)log=new Date();
-                super.save();
-                saveLog();// DB.D.close();
-            return this;
-        }//save
+	@Override public Sql.Tbl save() throws Exception {
+		if(log==null)log=new Date();
+		super.save();
+		saveLog();// DB.D.close();
+		return this;
+	}//save
 
-        void saveLog() throws Exception {
-            Log g=Log.tl();g.vals( valsForSql() );
-            g.save();
-        }//saveLog
+	void saveLog() throws Exception {
+		Log g=Log.tl();g.vals( valsForSql() );
+		g.save();
+	}//saveLog
 
-        //public static void save(String usr,String domain,String mac,String path,String prop,String val)throws Exception{save(usr,domain,mac,path,prop,val,null);} //global.now
+	public static void save(String usr,String domain,String mac,String path,String prop,SD d)throws Exception{//save(usr,domain,mac,path,prop,d.s,d.d);
+		Prop m=Prop.tl();
+		m.usr=usr;m.domain=domain;m.mac=mac;m.path=path;m.prop=prop;m.val=d.s;m.log=d.d;
+		m.save();
+	}
 
-        public static void save(String usr,String domain,String mac,String path,String prop,SD d)throws Exception{//save(usr,domain,mac,path,prop,d.s,d.d);
-            Prop m=Prop.tl();
-            m.usr=usr;m.domain=domain;m.mac=mac;m.path=path;m.prop=prop;m.val=d.s;m.log=d.d;
-            m.save();
-        }
+	public static Prop tl(){
+		TL t=TL.tl();
+		if(t.prop==null){
+			t.prop=new Prop();Log.tl();check(t);//x.checkDBTCreation();
+		}
+		return t.prop;
+	}
 
+	public static class SD{public String s;public Date d;public SD(String a,Date b){s=a;d=b;}}
 
-        public static Prop tl(){
-            TL t=TL.tl();
-            if(t.prop==null){
-                t.prop=new Prop();Log.tl();check(t);//x.checkDBTCreation();
-            }
-            return t.prop;
-        }
+	static Map byDates( String u, Date d1,Date d2, TL tl)throws Exception
+	{if(u==null||d1==null)return null;
+		Map m=Util.mapCreate();Prop t=tl();
+		Object[]where=d2==null?where(C.usr,u,Util.lst( C.log,Co.gt),d1)
+		:where(C.usr,u,Util.lst( C.log,Co.gt),d1 ,Util.lst( C.log,Co.le ),d2);
+		for(Sql.Tbl r:t.query( where )){
+			int[]a=Util.dt2array( t.log );
+			Util.byPath( m,true,true,u
+				,a[0],a[1],a[2],a[3],a[4],a[6],a[7]
+				,t.domain,t.mac,t.path,t.prop,t.val );}
+		return m;}
 
-       // @Override public Prop newInst(){return new Prop();}
+	static Map countByDates( String u, Date d1,Date d2, TL tl)throws Exception
+	{if(u==null||d1==null)return null;
+		Map m=Util.mapCreate();Prop t=tl();
+		Object[]where=d2==null?where(C.usr,u,Util.lst( C.log,Co.gt),d1)
+		:where(C.usr,u,Util.lst( C.log,Co.gt),d1 ,Util.lst( C.log,Co.le ),d2);
+		for(Sql.Tbl r:t.query( where )){
+			int[]a=Util.dt2array( t.log );
+			Util.byPath( m,true,true,u
+				,a[0],a[1],a[2],a[3],a[4],a[6],a[7]
+				,t.domain,t.mac,t.path,t.prop,t.val );}
+		return m;}
 
-        public static class SD{public String s;public Date d;public SD(String a,Date b){s=a;d=b;}}
+} // class Prop extends Tbl
 
-        Prop fk(String prop,String val){return null;}
-        static Prop load(String prop,String val){return null;}
-    } // class Prop extends Tbl
+public static class Log extends Prop{
 
-    public static class Log extends Prop{
+	@Override public String getName() {return "Log";}
 
-        @Override public String getName() {return "Log";}
+	void saveLog() throws Exception {}//saveLog
 
-        void saveLog() throws Exception {}//saveLog
+	@Override public List DBTblCreation(TL t){
+		List x=super.DBTblCreation(t)
+				,z=(List)x.get( 1 );
+		z.remove( 0 );
+		return x;
+	}
 
-        @Override public List DBTblCreation(TL t){
-            List x=super.DBTblCreation(t)
-              ,z=(List)x.get( 1 );
-            z.remove( 0 );
-            return x;
-        }
+	static{registered.add(Log.class);}
 
-        static{registered.add(Log.class);}
+	public static Log tl(){
+		TL t=TL.tl();
+		if( t.propLog==null){
+			t.propLog=new Log();check(t);
+		}
+		return t.propLog;
+	}
 
-        public static Log tl(){
-            TL t=TL.tl();
-            if( t.propLog==null){
-                t.propLog=new Log();check(t);
-            }
-            return t.propLog;
-        }
-
-    } // class Log extends Prop extends Tbl
+} // class Log extends Prop extends Tbl
 
 //////////////////////////////////////////////////////////////////////
 
-    public static class User extends Prop{
-        String pw;
-        static User load(String un){return null;}
-    }//class User //  @Override public Object[]wherePK(){Object[]a={C.id,id};return a;}
+public static class User extends Prop{
+	String pw;
+	static User load(String un){return null;}
+}//class User //  @Override public Object[]wherePK(){Object[]a={C.id,id};return a;}
 
 
 
