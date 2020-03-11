@@ -177,13 +177,55 @@ public class AsicsSrvlt extends M {
             }return r;}
 */
 }
-//    }//class GrjSrvlt
+
+
+    @HttpMethod(usrLoginNeeded = false) public static Map
+    updates(@HttpMethod(prmName = "usr") String u
+        , @HttpMethod(prmName = "domain") String domain
+        , @HttpMethod(prmName = "lastUpdate") Date lm
+        ,@HttpMethod(prmName = "clientTime")Date clientTime
+        ,@HttpMethod(prmName = "data")Map p
+        , TL tl)throws Exception
+    {Map m=Util.mapCreate();
+      Prop t=Prop.tl();
+      t.usr=u;t.domain=domain;
+      t.log=clientTime;
+      Prop.SD d=new Prop.SD("",null);
+      for (Object mac:p.keySet()) {
+         t.mac=mac.toString();Map p1=(Map)p.get(mac);
+         for (Object path:p1.keySet()) {
+            Map p2=(Map)p1.get(path);
+            t.path=path.toString();
+            for (Object prop:p2.keySet() ) {
+                t.prop=prop.toString();
+                List l=(List)p2.get(prop);
+                t.val=d.s=(String)l.get(0);
+                t.log=d.d=new Date((Long)l.get(1));
+                t.save();
+                Map m1=(Map)m.get(mac);
+                if(m1==null)m.put(mac,m1=Util.mapCreate());
+                Map m2=(Map)m1.get(path);
+                if(m2==null)m1.put(path,m2=Util.mapCreate());
+                m2.put(prop,System.currentTimeMillis());
+        }}}return m;}
+
+
+    @HttpMethod(usrLoginNeeded = false) public static Map
+    get(@HttpMethod(prmName = "usr") String u
+            , @HttpMethod(prmName = "from") Date d1
+            ,@HttpMethod(prmName = "to")Date d2
+            , TL tl)throws Exception
+    {Map m=Util.mapCreate();
+
+        return m;}
+
+//    }//class -Srvlt
 
 //////////////////////////////////////////////////////////////////////
     /**Object Store Entity entry/row*/
     public static class Prop extends Sql.Tbl {
         final static String dbtName="Prop";
-        static Field[]Filds;
+        //static Field[]Filds;
 
         @F public Integer id ;
 
