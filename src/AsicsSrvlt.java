@@ -1,3 +1,148 @@
+/*fields={status:["ant_elapsed"
+,"ant_fan1"
+,"ant_fan2"
+,"ant_fan3"
+,"ant_fan4"
+,"ant_fan5"
+,"ant_fan6"
+,"ant_fan7"
+,"ant_fan8"
+,"ant_foundblocks"
+,"ant_ghs5s"
+,"ant_ghsav"
+,"ant_localwork"
+,"ant_utility"
+,"ant_wu"
+,"cbi-table-1-accepted.1"
+,"cbi-table-1-accepted.2"
+,"cbi-table-1-accepted.3"
+,"cbi-table-1-accepted.4"
+,"cbi-table-1-asic.1"
+,"cbi-table-1-asic.2"
+,"cbi-table-1-asic.3"
+,"cbi-table-1-asic.4"
+,"cbi-table-1-chain.1"
+,"cbi-table-1-chain.2"
+,"cbi-table-1-chain.3"
+,"cbi-table-1-chain.4"
+,"cbi-table-1-diff.1"
+,"cbi-table-1-diff.2"
+,"cbi-table-1-diff1shares.1"
+,"cbi-table-1-diff1shares.2"
+,"cbi-table-1-diff1shares.3"
+,"cbi-table-1-diff1shares.4"
+,"cbi-table-1-diff1shares.5"
+,"cbi-table-1-diffaccepted.1"
+,"cbi-table-1-diffaccepted.2"
+,"cbi-table-1-diffaccepted.3"
+,"cbi-table-1-diffaccepted.4"
+,"cbi-table-1-diffaccepted.5"
+,"cbi-table-1-diffrejected.1"
+,"cbi-table-1-diffrejected.2"
+,"cbi-table-1-diffrejected.3"
+,"cbi-table-1-diffrejected.4"
+,"cbi-table-1-diffstale.1"
+,"cbi-table-1-diffstale.2"
+,"cbi-table-1-diffstale.3"
+,"cbi-table-1-diffstale.4"
+,"cbi-table-1-discarded.1"
+,"cbi-table-1-discarded.2"
+,"cbi-table-1-discarded.3"
+,"cbi-table-1-discarded.4"
+,"cbi-table-1-frequency.1"
+,"cbi-table-1-frequency.2"
+,"cbi-table-1-frequency.3"
+,"cbi-table-1-frequency.4"
+,"cbi-table-1-getworks.1"
+,"cbi-table-1-getworks.2"
+,"cbi-table-1-getworks.3"
+,"cbi-table-1-getworks.4"
+,"cbi-table-1-hw.1"
+,"cbi-table-1-hw.2"
+,"cbi-table-1-hw.3"
+,"cbi-table-1-lastsharedifficulty.1"
+,"cbi-table-1-lastsharedifficulty.2"
+,"cbi-table-1-lastsharedifficulty.3"
+,"cbi-table-1-lastsharetime.1"
+,"cbi-table-1-lastsharetime.2"
+,"cbi-table-1-lastsharetime.3"
+,"cbi-table-1-pool.1"
+,"cbi-table-1-pool.2"
+,"cbi-table-1-pool.3"
+,"cbi-table-1-pool.4"
+,"cbi-table-1-pool.5"
+,"cbi-table-1-priority.1"
+,"cbi-table-1-priority.2"
+,"cbi-table-1-priority.3"
+,"cbi-table-1-rate.1"
+,"cbi-table-1-rate.2"
+,"cbi-table-1-rate.3"
+,"cbi-table-1-rate.4"
+,"cbi-table-1-rate2.1"
+,"cbi-table-1-rate2.2"
+,"cbi-table-1-rate2.3"
+,"cbi-table-1-rate2.4"
+,"cbi-table-1-rejected.1"
+,"cbi-table-1-rejected.2"
+,"cbi-table-1-rejected.3"
+,"cbi-table-1-rejected.4"
+,"cbi-table-1-stale.1"
+,"cbi-table-1-stale.2"
+,"cbi-table-1-stale.3"
+,"cbi-table-1-stale.4"
+,"cbi-table-1-status.1"
+,"cbi-table-1-status.2"
+,"cbi-table-1-status.3"
+,"cbi-table-1-status.4"
+,"cbi-table-1-status.5"
+,"cbi-table-1-status.6"
+,"cbi-table-1-temp.1"
+,"cbi-table-1-temp.2"
+,"cbi-table-1-temp.3"
+,"cbi-table-1-temp2.1"
+,"cbi-table-1-temp2.2"
+,"cbi-table-1-temp2.3"
+,"cbi-table-1-url.1"
+,"cbi-table-1-url.2"
+,"cbi-table-1-url.3"
+,"cbi-table-1-user.1"
+,"cbi-table-1-user.2"
+,"cbi-table-1-user.3"
+] // status
+
+,net:["nettype", "netdevice", "macaddr", "ipaddress", "netmask", "conf_nettype", "conf_hostname", "conf_ipaddress", "conf_netmask", "conf_gateway", "conf_dnsservers"
+] // net
+
+,info: ["minertype", "nettype", "netdevice", "macaddr", "hostname", "ipaddress", "netmask", "gateway", "dnsservers", "curtime", "uptime", "loadaverage", "mem_total", "mem_used", "mem_free", "mem_buffers", "mem_cached", "system_mode", "ant_hwv", "system_kernel_version", "system_filesystem_version", "system_logic_version", "bmminer_version"
+] // info
+
+,config:[
+,"api-groups"
+,"bitmain-use-vil"
+,"pass"
+,"api-allow"
+,"bitmain-freq"
+,"bitmain-low-vol"
+,"bitmain-voltage"
+,"api-listen"
+,"api-network"
+,"url.1"
+,"url.2"
+,"url.3"
+,"user.1"
+,"user.2"
+,"user.3"
+,"pass.1"
+,"pass.2"
+,"pass.3"
+] // config
+
+,sys:["domain","log","user"] // sys
+
+}//fields
+
+* */
+
 import java.lang.reflect.Field;
 import java.util.*;
 public class AsicsSrvlt extends M {
@@ -335,6 +480,29 @@ public static class Prop extends Sql.Tbl {
 				,a[0],a[1],a[2],a[3],a[4],a[6],a[7]
 				,t.domain,t.mac,t.path,t.prop,t.val );}
 		return m;}
+
+//	static Map filter( String u, Date d1,Date d2, TL tl)throws Exception
+	@HttpMethod(usrLoginNeeded = false) public static Map
+	query(@HttpMethod(prmName = "usr") String u
+		, @HttpMethod(prmName = "logFrom") Date d1
+		,@HttpMethod(prmName = "logTo")Date d2
+		,@HttpMethod(prmName = "filterDomains")List domains
+		,@HttpMethod(prmName = "filterPaths")List paths
+		,@HttpMethod(prmName = "filterProps")List props
+		, TL tl)throws Exception
+	{if(u==null||d1==null)return null;
+		Map m=Util.mapCreate();Prop t=tl();
+
+		Object[]where=d2==null?where(C.usr,u,Util.lst( C.log,Co.gt),d1)
+			:where(C.usr,u,Util.lst( C.log,Co.gt),d1 ,Util.lst( C.log,Co.le ),d2);
+
+		for(Sql.Tbl r:t.query( where )){
+			int[]a=Util.dt2array( t.log );
+			Util.byPath( m,true,true,u
+					,a[0],a[1],a[2],a[3],a[4],a[6],a[7]
+					,t.domain,t.mac,t.path,t.prop,t.val );}
+		return m;}
+
 
 } // class Prop extends Tbl
 

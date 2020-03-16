@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pivot Demo From Local CSV</title>
+    <!-- external libs from cdnjs -->
+    <link rel="stylesheet" type="text/css" href="c3.min.css">
+
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery-ui.min.js"></script >
+    <script type="text/javascript" src="d3.min.js"></script>
+    <!-- script type="text/javascript" src="jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="PapaParse/4.1.2/papaparse.min.js"></script -->
+    <script type="text/javascript" src="c3.min.js"></script>
+
+    <!-- PivotTable.js libs from ../dist -->
+    <link rel="stylesheet" type="text/css" href="pivot.css">
+    <script type="text/javascript" src="pivot.js"></script>
+    <script type="text/javascript" src="d3_renderers.js"></script>
+    <script type="text/javascript" src="c3_renderers.js"></script>
+    <!-- script type="text/javascript" src="export_renderers.js"></script-->
+
+    <style>
+            html { height:100%; }
+            body {
+                font-family: Verdana;
+                min-height: 95%;
+                border: 5px dotted;
+            }
+            .whiteborder {border-color: white;}
+            .greyborder {border-color: lightgrey;}
+            #filechooser {
+                color: #555;
+                text-decoration: underline;;
+                cursor: pointer; /* "hand" cursor */
+            }
+            .node {
+              border: solid 1px white;
+              font: 10px sans-serif;
+              line-height: 12px;
+              overflow: hidden;
+              position: absolute;
+              text-indent: 2px;
+            }
+            .c3-line, .c3-focused {stroke-width: 3px !important;}
+            .c3-bar {stroke: white !important; stroke-width: 1;}
+            .c3 text { font-size: 12px; color: grey;}
+            .tick line {stroke: white;}
+            .c3-axis path {stroke: grey;}
+            .c3-circle { opacity: 1 !important; }
+            .c3-xgrid-focus {visibility: hidden !important;}
+        </style>
+</head>
+<body class="whiteborder">
+<script type="text/javascript">
+            $(function(){
+                var renderers = $.extend(
+                    $.pivotUtilities.renderers,
+                    $.pivotUtilities.c3_renderers,
+                    $.pivotUtilities.d3_renderers
+                    //,$.pivotUtilities.export_renderers
+                    );
+
+                var parseAndPivot = function(f) {
+                    $("#output").html("<p align='center' style='color:grey;'>(processing...)</p>")
+                    /*Papa.parse(f, {
+                        skipEmptyLines: true,
+                        error: function(e){ alert(e) },
+                        complete: function(parsed){
+                            $("#output").pivotUI(parsed.data, { renderers: renderers }, true);
+                        }
+                    });*/
+                    var data=Json.parse(f)
+                     $("#output").pivotUI(data, { renderers: renderers }, true);
+                };
+
+                $("#csv").bind("change", function(event){
+                    parseAndPivot(event.target.files[0]);
+                });
+
+                $("#textarea").bind("input change", function(){
+                    parseAndPivot($("#textarea").val());
+                });
+
+             });
+        </script>
+<p><a href="index.html">&laquo; back to PivotTable.js examples</a></p>
+<p align="center" style="line-height: 1.5">
+    <textarea placeholder="type or paste CSV text here" style="width: 300px;" id="textarea">
+        [["id","usr","domain","mac","path","prop","val","log"]
+,[1,'',258,50:60:70:80,status,found,0,2020/03/15/23:46:000</textarea>
+    <br />
+</p>
+
+<div id="output" style="margin: 10px;"></div>
+
+</body>
+</html>
